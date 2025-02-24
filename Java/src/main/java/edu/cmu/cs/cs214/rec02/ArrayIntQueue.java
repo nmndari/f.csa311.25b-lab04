@@ -10,60 +10,49 @@ import java.util.Arrays;
  * TODO: This implementation contains three bugs! Use your tests to determine the
  * source of the bugs and correct them!
  *
- * @author Alex Lockwood
- * @author Ye Lu
+ * @autho Alex Lockwood
+ * @autho Ye Lu
  */
 public class ArrayIntQueue implements IntQueue {
 
-    /**
-     * An array holding this queue's data
-     */
-    private int[] elementData;
-
-    /**
-     * Index of the next dequeue-able value
-     */
+    private Integer[] elementData;
     private int head;
-
-    /**
-     * Current size of queue
-     */
     private int size;
-
-    /**
-     * The initial size for new instances of ArrayQueue
-     */
     private static final int INITIAL_SIZE = 10;
 
-    /**
-     * Constructs an empty queue with an initial capacity of ten.
-     */
     public ArrayIntQueue() {
-        elementData = new int[INITIAL_SIZE];
+        elementData = new Integer[INITIAL_SIZE];
         head = 0;
         size = 0;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void clear() {
-        Arrays.fill(elementData, 0);
+        Arrays.fill(elementData, null);
         size = 0;
         head = 0;
     }
 
-    /** {@inheritDoc} */
+
+    @Override
     public Integer dequeue() {
-        if (isEmpty()) {
-            return null;
-        }
+        if (isEmpty()) return null;
         Integer value = elementData[head];
+        elementData[head] = null;
         head = (head + 1) % elementData.length;
         size--;
+        if (size == 0) {
+            head = 0; // Reset head when queue becomes empty
+        }
         return value;
     }
 
-    /** {@inheritDoc} */
+
+    @Override
     public boolean enqueue(Integer value) {
+        if (value == null) {
+            throw new IllegalArgumentException("Cannot enqueue null value");
+        }
         ensureCapacity();
         int tail = (head + size) % elementData.length;
         elementData[tail] = value;
@@ -71,17 +60,20 @@ public class ArrayIntQueue implements IntQueue {
         return true;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public boolean isEmpty() {
-        return size >= 0;
+        return size == 0;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public Integer peek() {
+        if (isEmpty()) {
+            return null;
+        }
         return elementData[head];
     }
 
-    /** {@inheritDoc} */
+    @Override
     public int size() {
         return size;
     }
@@ -92,17 +84,15 @@ public class ArrayIntQueue implements IntQueue {
      */
     private void ensureCapacity() {
         if (size == elementData.length) {
-            int oldCapacity = elementData.length;
-            int newCapacity = 2 * oldCapacity + 1;
-            int[] newData = new int[newCapacity];
-            for (int i = head; i < oldCapacity; i++) {
-                newData[i - head] = elementData[i];
+            int newCapacity = elementData.length * 2 + 1;
+            Integer[] newData = new Integer[newCapacity];
+    
+            for (int i = 0; i < size; i++) {
+                newData[i] = elementData[(head + i) % elementData.length]; // Corrected indexing
             }
-            for (int i = 0; i < head; i++) {
-                newData[head - i] = elementData[i];
-            }
+    
             elementData = newData;
-            head = 0;
+            head = 0; // Reset head to 0 after resizing
         }
-    }
+    }    
 }
