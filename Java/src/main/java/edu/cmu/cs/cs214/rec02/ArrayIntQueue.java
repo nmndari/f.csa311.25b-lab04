@@ -42,7 +42,7 @@ public class ArrayIntQueue implements IntQueue {
         head = (head + 1) % elementData.length;
         size--;
         if (size == 0) {
-            head = 0; // Reset head when queue becomes empty
+            clear(); // Queue хоосорсон үед clear() дуудаж дахин тохируулна
         }
         return value;
     }
@@ -50,9 +50,7 @@ public class ArrayIntQueue implements IntQueue {
 
     @Override
     public boolean enqueue(Integer value) {
-        if (value == null) {
-            throw new IllegalArgumentException("Cannot enqueue null value");
-        }
+        
         ensureCapacity();
         int tail = (head + size) % elementData.length;
         elementData[tail] = value;
