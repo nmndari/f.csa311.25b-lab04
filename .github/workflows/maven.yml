@@ -1,33 +1,36 @@
-name: Maven Test Workflow
+name: Maven Test
 
-on:
+on: 
   push:
-    branches:
-      - main
+    branches: [ main, master ]
   pull_request:
-    branches:
-      - main
+    branches: [ main, master ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4  # Fetch the latest code
 
-      - name: Set up JDK
+      - name: Debug - List Files
+        run: ls -R  # Prints all files for debugging
+
+      - name: Set up JDK 22
         uses: actions/setup-java@v3
         with:
-          distribution: 'temurin'
-          java-version: '17' # Change this to match your project JDK version
-          cache: maven
-
-      - name: Verify Maven Installation
-        run: mvn -version
-
-      - name: Install Dependencies
-        run: mvn clean install -DskipTests
+          distribution: 'temurin'  # JDK provider (alternatives: 'zulu', 'adopt', etc.)
+          java-version: '17'  # Change to your required version
+          cache: 'maven'  # Cache dependencies for faster builds
 
       - name: Run Tests
-        run: mvn test
+        run: |
+          if [ -f "Java/pom.xml" ]; then
+            mvn -f Java/pom.xml test --batch-mode
+          elif [ -f "pom.xml" ]; then
+            mvn test --batch-mode
+          else
+            echo "Error: pom.xml not found!"
+            exit 1
+          fi
