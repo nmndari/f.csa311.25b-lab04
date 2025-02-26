@@ -51,7 +51,7 @@ public class IntQueueTest {
 
     @Test
     public void testNotEmpty() {
-        mQueue.enqueue(42);
+        
         assertFalse("Queue хоосон биш байх ёстой", mQueue.isEmpty());
     }
 
