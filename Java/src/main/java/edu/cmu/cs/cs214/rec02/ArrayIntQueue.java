@@ -52,7 +52,7 @@ public class ArrayIntQueue implements IntQueue {
     public boolean enqueue(Integer value) {
         
         ensureCapacity();
-        int tail = (size) % elementData.length;
+        int tail = (head + size) % elementData.length;
         elementData[tail] = value;
         size++;
         return true;
