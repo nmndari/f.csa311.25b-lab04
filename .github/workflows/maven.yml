@@ -1,0 +1,36 @@
+name: Maven Test
+
+on: 
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4  # Fetch the latest code
+
+      - name: Debug - List Files
+        run: ls -R  # Prints all files for debugging
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'  # JDK provider (alternatives: 'zulu', 'adopt', etc.)
+          java-version: '17'  # Change to your required version
+          cache: 'maven'  # Cache dependencies for faster builds
+
+      - name: Run Tests
+        run: |
+          if [ -f "Java/pom.xml" ]; then
+            mvn -f Java/pom.xml test --batch-mode
+          elif [ -f "pom.xml" ]; then
+            mvn test --batch-mode
+          else
+            echo "Error: pom.xml not found!"
+            exit 1
+          fi
